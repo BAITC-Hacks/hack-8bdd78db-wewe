@@ -10,3 +10,20 @@ test('readiness boundaries are deterministic',()=>{const base=seed().tasks[0];fo
 test('milestone points require accepted team and cannot be duplicated',()=>{const db=seed(),p=db.proposals[0];assert.throws(()=>award(db,p.id,'discovery'));p.status='accepted';award(db,p.id,'discovery');assert.equal(db.milestones[0].points,25);assert.throws(()=>award(db,p.id,'discovery'));assert.throws(()=>award(db,p.id,'anything'));assert.equal(db.milestones.length,1);});
 test('AI schema rejects malformed questions, duplicate keys, and missing categories',()=>{assert.throws(()=>validateQuestions({questions:[]}));const qs=mockQuestions('shop');assert.equal(validateQuestions({questions:qs}).length,7);assert.throws(()=>validateQuestions({questions:[...qs.slice(0,6),qs[0]]}));assert.throws(()=>validateQuestions({questions:qs.map(q=>({...q,question:5}))}));});
 test('mock is labeled; invalid or unavailable live AI falls back safely',async()=>{const config={AI_API_KEY:'test',AI_ENDPOINT:'https://provider.invalid'};assert.equal((await clarify('Shop stock is unpredictable',{})).mode,'mock');for(const request of [async()=>({ok:true,json:async()=>({questions:'bad'})}),async()=>{throw Error('timeout');},async()=>({ok:false})]){const result=await clarify('Shop stock is unpredictable',config,request);assert.equal(result.mode,'mock-fallback');assert.equal(result.questions.length,7);}const live=await clarify('Shop stock is unpredictable',config,async()=>({ok:true,json:async()=>({questions:mockQuestions('shop')})}));assert.equal(live.mode,'live');});
+
+test('Russian clarification questions preserve the schema and recognize Russian topics',async()=>{
+ for(const [problem,subject] of [['В магазине заканчиваются товары','торговли'],['Школе нужны учебные материалы','обучения'],['Нужно ускорить доставку','доставки']]){
+  const result=await clarify(problem,{});
+  assert.equal(validateQuestions(result).length,7);
+  assert.match(result.notice,/Локальный режим/);
+  assert.ok(result.questions[0].question.includes(subject));
+ }
+});
+
+test('clarification supports English and Kazakh, including fallback and live prompt language',async()=>{
+ for(const [language,problem,expected] of [['en','Our shop needs inventory help','retail'],['kk','Дүкендегі қорды жоспарлау керек','сауда']]){
+  const mock=await clarify(problem,{},undefined,language);assert.equal(validateQuestions(mock).length,7);assert.ok(mock.questions[0].question.includes(expected));
+  const fallback=await clarify(problem,{AI_ENDPOINT:'https://adapter.invalid',AI_API_KEY:'test'},async()=>{throw Error('offline');},language);assert.equal(fallback.mode,'mock-fallback');assert.ok(fallback.questions[0].question.includes(expected));
+  await clarify(problem,{AI_ENDPOINT:'https://adapter.invalid',AI_API_KEY:'test'},async(url,options)=>{const body=JSON.parse(options.body);assert.equal(body.input.language,language);assert.ok(body.prompt.includes(language==='kk'?'in Kazakh':'in English'));return {ok:true,json:async()=>mock};},language);
+ }
+});

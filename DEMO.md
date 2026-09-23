@@ -1,54 +1,67 @@
-# Four-minute-forty-five-second demonstration
+# Демонстрация за 4 минуты 45 секунд
 
-Start with `npm start`, open http://localhost:3000, and select **Business**. Use the default local mock mode. Seed data makes proposal comparison and catalog variety immediately available.
+Запустите `npm start`, откройте http://localhost:3000 и выберите **Бизнес**. Используйте локальный режим вопросов. Для чистого показа можно запустить приложение с новым `DATA_FILE`, как описано в README.
 
-## 0:00–0:30 — The problem
+## 0:00–0:30 — Проблема
 
-Show the overview and click **Create a task**. Enter:
+Нажмите **Создать задачу** и введите:
 
-> Our shop keeps running out of popular products. Stock planning takes too long.
+> В нашем магазине часто заканчиваются популярные товары. Планирование запасов занимает слишком много времени.
 
-Click **Help me clarify this**. Point out the **Local mock mode** label and seven relevant questions. No information is invented.
+Нажмите **Уточнить задачу**. Покажите семь вопросов и пометку **Локальный режим**: в этом режиме внешний ИИ не вызывается.
 
-## 0:30–1:30 — Clarify and review
+## 0:30–1:30 — Уточнение и подтверждение
 
-Keep the prefilled context. Answer just these two questions:
+Сохраните подставленный контекст. Ответьте ещё на два вопроса:
 
-- Target users: `Our shop manager and purchasing assistant.`
-- Data: `Six months of anonymized sales CSVs and our product list are available.`
+- Пользователи: `Управляющий магазином и сотрудник отдела закупок.`
+- Данные: `Доступны обезличенные продажи за шесть месяцев в CSV и список товаров.`
 
-Leave the other four answers empty. Click **Build editable brief**. Enter title `Smarter weekly stock planning`, and topic `Retail`. Show that missing answers stayed empty and all fields are editable. Click **Save draft**.
+Остальные ответы оставьте пустыми. Нажмите **Сформировать карточку**, задайте название `Планирование товарных запасов` и тему `Торговля`, затем **Сохранить черновик**.
 
-The score is **0** because nothing has been confirmed. Click **Confirm reviewed card**. The score becomes **50 / Developing**. Point to the category breakdown and missing-information suggestions.
+Покажите рейтинг **0**: сведения ещё не подтверждены. Нажмите **Подтвердить карточку** — рейтинг станет **50 / В работе**. Покажите расшифровку и подсказки по улучшению.
 
-## 1:30–2:30 — Improve and publish
+## 1:30–2:30 — Улучшение и публикация
 
-Click **Edit brief**, and fill:
+Нажмите **Редактировать** и заполните:
 
-- Constraints: `Deliver a prototype in three weeks using free tools and anonymized data.`
-- Expected result: `A dashboard that recommends weekly reorder quantities from uploaded CSVs.`
-- Success criteria: `Reduce weekly planning from 6 hours to 3 hours during a four-week pilot.`
-- Contact: `Shop owner at demo@example.com; weekly online review calls.`
+- Ограничения и сроки: `Прототип за три недели на бесплатных инструментах и обезличенных данных.`
+- Ожидаемый результат: `Панель с рекомендациями по еженедельным закупкам на основе CSV с продажами.`
+- Критерии успеха: `Сократить планирование с 6 до 3 часов в неделю за четыре недели пилота.`
+- Контакт и взаимодействие: `Владелец: demo@example.com. Обратная связь на еженедельных онлайн-встречах.`
 
-Click **Save changes**. The score stays **50** until **Confirm reviewed card** is clicked, then becomes **100 / Priority**. Click **Publish task**, then **Task catalog**. It appears in the top readiness group. Show the 20-point community task is also visible and open; use the Draft readiness filter, then clear it.
+Нажмите **Сохранить изменения**: рейтинг пока 50. После **Подтвердить карточку** он станет **100 / Приоритетная**. Нажмите **Опубликовать задачу**, затем откройте **Каталог задач**. Покажите задачу среди карточек с максимальным рейтингом. Фильтр **Черновик** показывает опубликованную задачу с 20 баллами — на неё тоже можно откликнуться.
 
-## 2:30–3:30 — Student proposal
+## 2:30–3:30 — Отклик команды
 
-Switch to **Student team**, open your new task, and click **Submit a proposal**. Select **Steppe AI** and paste:
+Выберите **Команда студентов**, откройте новую задачу и нажмите **Отправить отклик**. Выберите **Steppe AI** и заполните:
 
-- Solution idea: `Build a lightweight dashboard that turns weekly sales CSVs into reorder suggestions.`
-- Plan: `Interview the owner, inspect sample CSVs, build the dashboard, and evaluate it on a four-week pilot.`
-- Estimated timeline: `3 weeks`
-- Prototype URL: `https://example.com/stock-prototype`
+- Идея решения: `Создадим панель, которая преобразует CSV с продажами в рекомендации по закупкам.`
+- План: `Обсудим процесс с владельцем, изучим CSV, соберём прототип и проверим его на пилоте.`
+- Срок выполнения: `3 недели`
+- Ссылка на прототип: `https://example.com/stock-prototype`
 
-Click **Submit proposal**. Explain that this example URL stands in for the team's real prototype link. Show the pending status.
+Отправьте отклик. Покажите статус **На рассмотрении**. Объясните, что ссылка в примере демонстрационная.
 
-## 3:30–4:15 — Business choice and verified progress
+## 3:30–4:15 — Решение бизнеса и прогресс
 
-Switch back to **Business**. Accept the new proposal manually. Explain that other teams remain eligible and the business may accept several or none. Click **Confirm prototype** only as a demonstration of reviewed work: it awards 25 points and the button becomes disabled. Open **Student teams** and show Steppe AI's points.
+Переключитесь в **Бизнес**. В новом отклике нажмите **Выбрать команду**. Другие команды остаются доступны: бизнес может принять несколько предложений или отклонить все.
 
-Open **Proposals** to compare three seed proposals on the shop task. Reject one, leaving other choices independent.
+Нажмите **Подтвердить: Прототип**, имитируя проверку выполненной работы. Команда получит 25 баллов; повторное подтверждение недоступно. Откройте **Команды** и покажите баллы Steppe AI.
 
-## 4:15–4:45 — Persistence and close
+В разделе **Отклики** сравните три начальных предложения на задачу магазина. Отклоните одно — решения по другим не изменятся.
 
-Refresh the page. Show that the decision and team points remain. Open the catalog and recap: **vague challenge → questions → reviewed brief → transparent readiness → proposal → human decision**. Mention that automated tests also verify server-restart persistence and malformed AI-response fallback.
+## 4:15–4:45 — Сохранение результата
+
+Обновите страницу. Покажите, что решение и баллы сохранились. Напомните последовательность: описание → вопросы → подтверждённая карточка → рейтинг → публикация → отклик → решение бизнеса.
+
+Сохранение после перезапуска сервера и обработка некорректного ответа AI дополнительно проверяются командой `npm test`.
+
+## Дополнительная проверка настроек и голоса
+
+1. Выберите English, затем Қазақша в шапке — меню и подсказки должны измениться.
+2. Введите текст в форму и смените язык — текст должен сохраниться.
+3. Переключите тему, обновите страницу — тема и язык должны сохраниться.
+4. Откройте голосового помощника, нажмите кнопку записи и разрешите микрофон. Скажите команду каталога на выбранном языке.
+5. В режиме диктовки выберите поле, включите запись и произнесите текст. Проверьте вставку без отправки формы.
+6. Проверьте чтение страницы и кнопку остановки. При отсутствии поддержки речи или голоса должно появиться объяснение. Казахское распознавание и голос проверяются отдельно на устройстве жюри.
