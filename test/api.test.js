@@ -1,0 +1,24 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,rm} from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import net from 'node:net';
+async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
+test('complete demo journey and disk persistence across a server restart',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'alem-test-'));const port=await freePort();let child;
+ const start=async()=>{child=spawn(process.execPath,['server.js'],{env:{...process.env,PORT:String(port),DATA_FILE:path.join(dir,'state.json'),AI_API_KEY:''},stdio:['ignore','pipe','pipe']});await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Server did not start')),5000);child.once('error',reject);child.once('exit',code=>{if(code)reject(Error('Server exited '+code));});child.stdout.once('data',()=>{clearTimeout(timer);resolve();});});};
+ const stop=async()=>{if(child&&!child.killed){const done=new Promise(r=>child.once('exit',r));child.kill();await done;}};
+ const call=async(route,data)=>{const r=await fetch(`http://127.0.0.1:${port}/api/${route}`,data===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});return {status:r.status,data:await r.json()};};
+ try{await start();const questions=(await call('clarify',{problem:'Our shop needs help managing stock.'})).data;assert.equal(questions.questions.length,7);assert.equal(questions.mode,'mock');
+ const weak={title:'Plan stock better',topic:'Retail',context:'Our shop needs help managing stock.',users:'',data:'',constraints:'',outcome:'',criteria:'',contact:''};const t=(await call('tasks',weak)).data;assert.equal((await call(`tasks/${t.id}/publish`,{})).status,400);await call(`tasks/${t.id}/confirm`,{});let state=(await call('state')).data;assert.equal(state.tasks.find(x=>x.id===t.id).score.total,20);
+ const improved={...weak,users:'Our shop managers',data:'Six months of anonymized product sales CSV files.',constraints:'Build a prototype in three weeks using free tools.',outcome:'A dashboard recommending weekly reorder amounts.',criteria:'Reduce planning from 6 to 3 hours within a four-week pilot.',contact:'Owner at demo@example.com, weekly online calls.'};await call(`tasks/${t.id}/save`,improved);state=(await call('state')).data;assert.equal(state.tasks.find(x=>x.id===t.id).score.total,20);await call(`tasks/${t.id}/confirm`,{});await call(`tasks/${t.id}/publish`,{});state=(await call('state')).data;assert.equal(state.tasks.find(x=>x.id===t.id).score.total,100);
+ const sorted=state.tasks.filter(t=>t.status==='published').sort((a,b)=>b.score.total-a.score.total);assert.equal(sorted.at(-1).score.total,20);assert.equal(sorted[0].score.total,100);
+ const submission={taskId:t.id,teamId:'team-1',idea:'We will build a focused inventory planning prototype.',plan:'Interview the owner, process sample CSVs, test reorder suggestions.',timeline:'3 weeks',prototypeUrl:'https://example.com/prototype'};assert.equal((await call('proposals',{...submission,prototypeUrl:'javascript:alert(1)'})).status,400);const p=(await call('proposals',submission)).data;assert.equal(p.status,'pending');
+ assert.equal((await call('proposals',{...submission,taskId:'task-5',teamId:'team-2'})).status,200); // low score remains open
+ const p2=(await call('proposals',{...submission,teamId:'team-3'})).data;for(const id of [p.id,p2.id])assert.equal((await call('decisions',{proposalId:id,status:'accepted'})).status,200);
+ assert.equal((await call('milestones',{proposalId:p.id,milestone:'prototype'})).status,200);assert.equal((await call('milestones',{proposalId:p.id,milestone:'prototype'})).status,400);await call('decisions',{proposalId:p2.id,status:'rejected'});
+ await stop();await start();state=(await call('state')).data;assert.equal(state.tasks.find(x=>x.id===t.id).score.total,100);assert.equal(state.proposals.find(x=>x.id===p.id).status,'accepted');assert.equal(state.proposals.find(x=>x.id===p2.id).status,'rejected');assert.equal(state.milestones.filter(m=>m.proposalId===p.id).length,1);assert.equal(state.teams.length,5);
+ }finally{await stop();await rm(dir,{recursive:true,force:true});}
+});
